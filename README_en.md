@@ -15,25 +15,46 @@
 
 Slay the Spire 2 officially supports modding with extensive hooks and Harmony integration.
 
-**Basic Installation Steps:**
+**Installation:**
 1. Create a `mods` folder in the game's root directory
-2. Drop the `.pck` and `.dll` files into it
+2. Drop the `.pck` or `.dll` files into it. Each mod must have a mod_manifest.json to describe it, while these two files are optional
 3. Launch the game
 
-**System Compatibility Note:**
+mod_manifest.json example: (Alchyr ModTemplate)
+
+```json
+{
+  "id": "ModTemplate",
+  "name": "ModTemplate",
+  "author": "{ModAuthor}",
+  "description": "Slay the Spire 2 mod created from a template for use with BaseLib",
+  "version": "v0.0.0",
+  "has_pck": true,
+  "has_dll": true,
+  "dependencies": ["BaseLib"],
+  "affects_gameplay": true
+}
+```
+
+**Note:**
 If your mods fail to load (especially for Linux and MacOS users), install [BaseLib](https://www.github.com/Alchyr/BaseLib) to resolve compiler differences.
 
-**Switching Back to Non-Modded Mode:**
-You can switch in the main menu settings, or add `--nomods` to Steam launch options. If you're unsure whether mods are causing launch issues, it's recommended to use `--nomods` first to troubleshoot.
+MacOS seems to have another loading issue due to arm, but it appears to have been fixed in 0.99.
+
+**Disabling Mod Mode:**
+You can toggle each mod on/off in the main menu settings, or add `--nomods` to Steam launch options to disable all mods. If you're unsure whether mods are causing launch issues, it's recommended to use `--nomods` first to troubleshoot.
 
 **Multiplayer:**
-Slay the Spire 2 requires all players in multiplayer to have the exact same game version
-and the same mod list.
+Slay the Spire 2 requires all players in multiplayer to have the exact same game version, and all must load multiplayer mods with matching version numbers.
 
-Some platforms have delayed hot updates. You can ask your friend to copy the release_info.json from their installation directory (Steam -> Slay the Spire 2 -> Right-click on the game in the list/Settings icon to the right of the launch button -> Manage -> Browse local files) to yours, 
-which will trick the game into thinking your version is exactly the same as theirs.
+Some platforms have delayed hot updates. You can ask your friend to copy the release_info.json from their installation directory (Steam -> Slay the Spire 2 -> Right-click on the game in the list/Settings icon to the right of the launch button -> Manage -> Browse local files) to yours,
+which will trick the game into thinking your version is exactly the same as theirs. Security not guaranteed.
+
+The mod_manifest.json specifies whether a mod affects gameplay content via `affect_gameplay`, i.e. whether the mod needs to be installed by all players. Mods with affect_gameplay must be installed by all multiplayer participants, otherwise besides the "we have mods that the host doesn't have" warning, you may also get "connection timeout" errors.
 
 Mod IDs and version numbers must match exactly. Make sure your friends also have the same mods installed.
+
+Additionally, Slay the Spire 2's application-layer network architecture is: Client sends requests to Host, then Host broadcasts. Client receives broadcasted requests once, but Host's own requests are only broadcast once without replay. If your mod behaves differently on client vs host, please investigate this.
 
 ## 2. Save System & Data Recovery
 

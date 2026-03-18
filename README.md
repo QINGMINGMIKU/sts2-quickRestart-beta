@@ -2,7 +2,7 @@
 >
 > 薄荷尖塔的维护者已经手搓了一个，安全性应该比我这个 Vibe 的强，请您务必安装他们的：
 > <https://github.com/erasels/StS2-Quick-Restart>
-> 
+>
 > 或者你喜欢薄荷尖塔2？
 > <https://github.com/erasels/Minty-Spire-2>
 
@@ -18,24 +18,46 @@
 
 尖塔2官方已支持 Modding，并提供了大量钩子和 Harmony 支持。
 
-**基础安装步骤：**
+**安装：**
 1. 在游戏目录下创建 `mods` 文件夹
-2. 将 `.pck` 和 `.dll` 文件放入该文件夹
+2. 将 `.pck` 或 `.dll` 文件放入该文件夹。每个 mod 必有一个 mod_manifest.json 来描述，而这两个文件是可选的
 3. 启动游戏
 
-**系统兼容性提示：**
+mod_manifest.json 例如下：(来自 Alchyr ModTemplate)
+
+```json
+{
+  "id": "ModTemplate",
+  "name": "ModTemplate",
+  "author": "{ModAuthor}",
+  "description": "Slay the Spire 2 mod created from a template for use with BaseLib",
+  "version": "v0.0.0",
+  "has_pck": true,
+  "has_dll": true,
+  "dependencies": ["BaseLib"],
+  "affects_gameplay": true
+}
+```
+
+**提示：**
 如果您的 Mod 加载有问题（尤其是 Linux 和 MacOS 用户），请前往安装 [BaseLib](https://www.github.com/Alchyr/BaseLib) 来解决一些编译器差异。
 
-**切换回非 Mod 模式：**
-您可以在主菜单的设置中切换，或者在 Steam 启动选项中添加 `--nomods`。如果您不确定是否是 Mod 导致了游戏启动问题，建议先使用 `--nomods` 来排查。
+MacOS 因为 arm 似乎有另一个加载问题，但是在 0.99 中似乎已经得到修复。
+
+**关掉 Mod 模式：**
+您可以在主菜单的设置中切换每个 mod 的开关，或者在 Steam 启动选项中添加 `--nomods` 关闭所有 Mod。如果您不确定是否是 Mod 导致了游戏启动问题，建议先使用 `--nomods` 来排查。
 
 **联机：**
-杀戮尖塔 2 强制所有联机的玩家都必须使用完全相同的游戏版本、相同的 Mod 列表。
+杀戮尖塔 2 强制所有联机的玩家都必须使用完全相同的游戏版本，并都加载了具有相同版本号的联机 mod。
 
 部分平台的热更新似乎是滞后的。让朋友拷贝安装目录（Steam -> 塔2 -> 列表右键/启动按钮右边的右边的设置图标 -> 管理 -> 浏览本地文件） release_info.json 给您，
-就可以欺骗游戏认为您的版本和他们完全一样了。
+就可以欺骗游戏认为您的版本和他们完全一样了。不保证安全性。
+
+mod_manifest.json 里规定了 mod 是否会影响游戏内容 `affects_gameplay`，即 mod 是否需要多人都装。 affect_gameplay 的 mod 联机者必须都装，否则除了“我们有而房主没有的mod”这一提示之外也很有可能提示“联机超时”。
 
 Mod ID 和版本号必须完全匹配。请让您的朋友们也安装相同的 Mod 。
+
+另外，杀戮尖塔 2 的应用层网络结构是：客户端 Client 向 房主 Host 发送请求，然后 Host 再广播给所有 Client（不包括 Host 自己）。 Client 总会被再广播一次自己的请求，但是 Host 的请求只会广播 1 次而不会发送到自身。如果您的 Mod 在客户端和房主表现不同，请排查这里。
 
 ## 2. 存档系统与数据恢复
 
