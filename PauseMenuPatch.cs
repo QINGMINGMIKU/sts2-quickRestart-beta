@@ -1,6 +1,7 @@
 using Godot;
 using HarmonyLib;
 using MegaCrit.Sts2.addons.mega_text;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Multiplayer.Game;
 using MegaCrit.Sts2.Core.Nodes.GodotExtensions;
 using MegaCrit.Sts2.Core.Nodes.Screens.PauseMenu;
@@ -34,7 +35,7 @@ public static class PauseMenuPatch
             retryButton.Name = "Retry";
             MakeButtonVisualsUnique(retryButton);
             retryButton.GetNode<MegaLabel>("Label")
-                .SetTextAutoSize(ModLocalization.Get("pause_menu.retry", "Retry"));
+                .SetTextAutoSize(new LocString("gameplay_ui", "QUICKRESTART2.pause_menu.retry").GetFormattedText());
 
             // Insert before GiveUp
             NPauseMenuButton giveUpButton = buttonContainer.GetNode<NPauseMenuButton>("GiveUp");
@@ -63,15 +64,10 @@ public static class PauseMenuPatch
         }
     }
 
-    private static void OnRetryPressed(NButton _, Control buttonContainer)
+    private static void OnRetryPressed(NButton btn, Control buttonContainer)
     {
-        // Disable all buttons during the transition to match fade out behavior
-        foreach (Node child in buttonContainer.GetChildren())
-        {
-            if (child is NPauseMenuButton btn)
-                btn.Disable();
-        }
-
+        // Immediately disable the retry button to prevent rapid clicks
+        btn.Disable();
         QuickSaveLoad.QuickLoad();
     }
 
@@ -108,14 +104,14 @@ public static class PauseMenuPatch
 }
 
 /// <summary>
-/// Harmony patch that disables all pause menu buttons (including the Retry button)
-/// when Save&Quit is pressed, ensuring consistent highlight behavior.
+/// Harmony prefix that disables all pause menu buttons (including the Retry button)
+/// before Save &amp; Quit executes, preventing any further button interactions.
 /// </summary>
-[HarmonyPatch(typeof(NPauseMenu), "CloseToMenu")]
+[HarmonyPatch(typeof(NPauseMenu), "OnSaveAndQuitButtonPressed")]
 public static class SaveAndQuitDisablePatch
 {
-    [HarmonyPostfix]
-    public static void Postfix(NPauseMenu __instance)
+    [HarmonyPrefix]
+    public static void Prefix(NPauseMenu __instance)
     {
         // Disable all buttons in the container, including our Retry button
         Control buttonContainer = __instance.GetNode<Control>("%ButtonContainer");

@@ -1,0 +1,12 @@
+{
+  "id": "quickRestart2",
+  "name": "quickRestart2",
+  "author": "erasels, freude916, copilot, Anthropic Opus 4.6",
+  "description": "quick save & load in Sts2",
+  "version": "v0.1.2.99-archived",
+  "has_pck": true,
+  "has_dll": true,
+  "dependencies": [
+  ],
+  "affects_gameplay": false
+}
