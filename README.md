@@ -300,7 +300,7 @@ saves文件夹可能有下列文件：
 
 友链：
 
-- [STS2-RitsuLib](https://github.com/BAKAOLC/STS2-RitsuLib/：一个很重、很显式的基础库。提供了非常丰富但是手柄支持比较差的设置面板。大多数钩子倾向于多让您集中手动注册各种数据。也没有把 Keyword 塞进原生游戏而是分开单独判断。提供了丰富的 fmod 支持。
-- [lemonSpire2](https://github.com/freude916/lemonSpire2) ：我制作的多人优化一键包，提供了多人聊天面板、看手牌、发送物品等等多个功能。
+- [STS2-RitsuLib](https://github.com/BAKAOLC/STS2-RitsuLib/)：一个很重、很显式的基础库。提供了非常丰富但是手柄支持比较差的设置面板。大多数钩子倾向于多让您集中手动注册各种数据。也没有把 Keyword 塞进原生游戏而是分开单独判断。提供了丰富的 fmod 支持。
+- [lemonSpire2](https://github.com/freude916/lemonSpire2)：我制作的多人优化一键包，提供了多人聊天面板、看手牌、发送物品等等多个功能。
 - [JianBao233](https://github.com/Jianbao233/STS2_mod)：煎包 Mod 列表。推荐那款调整/隐藏 Mod 的。
 - [薄荷尖塔2](https://github.com/erasels/Minty-Spire-2)
