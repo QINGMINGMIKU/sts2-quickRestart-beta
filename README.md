@@ -44,6 +44,9 @@ mod_manifest.json 例如下：(来自 Alchyr ModTemplate)
 
 MacOS 因为 arm 似乎有另一个加载问题，但是在 0.99 中似乎已经得到修复。
 
+> [!IMPORTANT]
+> 由于 Mod 社区的疏忽， 2026年3月15日之前 ModTemplate 误将 pck 构建目标(`binary_format/architecture`)设为了 `x86_64` 而非 `msil` ，而 Godot 下 pck 元数据会影响 dll 导致无法加载，这严重破坏了 arm 兼容性，包括 M 系列 mac 和所有手持终端。如果您在日志中发现  `xxx.dll The assembly architecture is not compatible with the current process atchitecture` 问题，这不是 dll 的问题 ( C# msil dll 是跨平台的 ) 而是 pck 的问题 ，您可能需要手工编译那些早期 mod （无需编译 assembly 只需打包 pck），或者用 pck 工具拆解 pck 后重打包或修复元数据，见下。
+
 **关掉 Mod 模式：**
 您可以在主菜单的设置中切换每个 mod 的开关，或者在 Steam 启动选项中添加 `--nomods` 关闭所有 Mod。如果您不确定是否是 Mod 导致了游戏启动问题，建议先使用 `--nomods` 来排查。
 
@@ -193,7 +196,7 @@ Mod ID 和版本号必须完全匹配。请让您的朋友们也安装相同的 
 
 或者，如果您喜欢，您也可以使用 [gbe_fork](https://github.com/Detanup01/gbe_fork) 来模拟 Steam API 。
 
-如果您想要协助 Mod 作者调试，在上面的“本地存档目录” .../SlayTheSpire2/中找到 logs 文件夹，将日志文件按照对应时间戳发给作者。 或者使用 --log-file 参数指定一个日志文件路径。
+如果您想要协助 Mod 作者调试，在上面的“本地存档目录”的外层文件夹找到 logs 文件夹，或者敲 `open logs` 命令就能到达这个文件夹，将日志文件按照对应时间戳发给作者。 或者使用 --log-file 参数指定一个日志文件路径。
 
 ## 5. 获取更多 Mod 与玩家交流群
 
@@ -211,7 +214,7 @@ Mod ID 和版本号必须完全匹配。请让您的朋友们也安装相同的 
 ## 1. 教程与学习资源
 
 * **[Glitched Reme 的塔2 Mod 教程](https://github.com/GlitchedReme/SlayTheSpire2ModdingTutorials)**（中文，持续更新中）
-* **[EarlyStS2ModdingGuides](https://github.com/Cany0udance/EarlyStS2ModdingGuides/wiki/Getting-Started-With-Modding)**：Mod 开发入门指南（英文）。
+* **[BaseLib wiki](https://github.com/Alchyr/BaseLib-StS2/wiki)** （BaseLib wiki，除了围绕 baselib 本身也提供了一些额外的教程）
 
 **语言与引擎基础：**
 如果你打算把 Mod 开发作为学习 C# 的机会，建议系统学习：
@@ -230,12 +233,12 @@ Mod ID 和版本号必须完全匹配。请让您的朋友们也安装相同的 
 
 推荐参考 Alchyr 的样板，一键构建：
 * **[ModTemplate-StS2](https://github.com/Alchyr/ModTemplate-StS2)**：一个开箱即用的尖塔2 C# Mod 工程模板，内置构建 csproj 脚本和基础目录结构，克隆后改改就能上手。
-* **[BaseLib-StS2](https://github.com/Alchyr/BaseLib-StS2)**：类似塔1 BaseMod 的基础库（开发中），目前提供了 ModelPool 的钩子和 i18n ，值得一用。
+* **[BaseLib-StS2](https://github.com/Alchyr/BaseLib-StS2)**：类似塔1 BaseMod 的基础库（开发中），目前提供了 ModelPool 的钩子，值得一用。
 
 ## 3. 工具与反编译 (Tools & Decompilation)
 
 **代码反编译：** 尖塔2没有进行任何混淆，可使用 [ilSpy](https://www.github.com/icsharpcode/ILSpy) 或[dnSpyEx](https://github.com/dnSpyEx/dnSpy) 反汇编出游戏源代码。
-**资源解包：** 使用 [GD RE Tools 的 gdsdecomp](https://github.com/GDRETools/gdsdecomp/) 将游戏的资源解包。
+**资源解包：** 使用 [GD RE Tools 的 gdsdecomp](https://github.com/GDRETools/gdsdecomp/) 将游戏的资源解包。相较于下面的 pck explorer， gdsdecomp 会还原.import的压缩格式到原始路径，甚至拆分纹理图集 (Atlas)。
 
 **资源打包：**
 * 您需要将资源打包成 `.pck` 文件才能被识别。
