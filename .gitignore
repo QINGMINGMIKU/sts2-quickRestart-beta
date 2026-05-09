@@ -1,13 +1,35 @@
+# Godot
 .godot/
-bin/
 /android/
-.git/
+
+# Godot export/build artifacts
+*.pck
+*.apk
+*.aab
+*.ipa
+*.xcarchive
+
+# .NET / MSBuild
+bin/
+obj/
+.mono/
+
+# IDEs
 .idea/
-project.godot
 .vs/
-publish/
-Properties/
-.editorconfig
-*.import
-*.uid
+.vscode/
 *.user
+*.rsuser
+*.suo
+*.userprefs
+*.DotSettings.user
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Archives
+QuickReload.zip
+
+# Logs
+*.log

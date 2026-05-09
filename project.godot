@@ -10,13 +10,13 @@ config_version=5
 
 [application]
 
-config/name="quickRestart2"
+config/name="QuickReload"
 config/features=PackedStringArray("4.5.1", "C#", "Mobile")
 config/icon="res://icon.svg"
 
 [dotnet]
 
-project/assembly_name="quickRestart2"
+project/assembly_name="QuickReload"
 
 [rendering]
 
