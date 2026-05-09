@@ -2,7 +2,6 @@ using Godot;
 using HarmonyLib;
 using MegaCrit.Sts2.addons.mega_text;
 using MegaCrit.Sts2.Core.Helpers;
-using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Multiplayer.Game;
 using MegaCrit.Sts2.Core.Nodes.GodotExtensions;
@@ -15,49 +14,38 @@ namespace QuickReload;
 static class QuickReloadPauseMenuPatch
 {
     private const string QuickReloadNodeName = "QuickReload_QuickReloadButton";
-    private static readonly LocString RestartLoc = new("gameplay_ui", "PAUSE_MENU.RESTART");
 
     static void Postfix(NPauseMenu __instance)
     {
         if (RunManager.Instance.NetService.Type == NetGameType.Client)
-        {
-            Log.Info("[QUICKRELOAD]: Quick Restart: client run detected, skipping button addition.");
             return;
-        }
 
-        var buttonContainer = __instance.GetNodeOrNull<VBoxContainer>("PanelContainer/ButtonContainer");
-        if (buttonContainer == null)
-        {
-            Log.Warn("[QUICKRELOAD]: Quick Restart: couldn't find button container.");
-            return;
-        }
+        // Use Traverse to access private fields that we know work in beta
+        var buttonContainer = Traverse.Create(__instance)
+            .Field<Control>("_buttonContainer")
+            .Value;
+        if (buttonContainer == null) return;
 
         if (buttonContainer.GetNodeOrNull<Node>(QuickReloadNodeName) != null)
-        {
-            Log.Warn("[QUICKRELOAD]: Quick Restart: button already exists, skipping.");
             return;
-        }
 
-        var saveAndQuitButton = buttonContainer.GetNode<NPauseMenuButton>("SaveAndQuit");
-        var restartButton = saveAndQuitButton.Duplicate((int)(
-            Node.DuplicateFlags.Groups |
-            Node.DuplicateFlags.Scripts |
-            Node.DuplicateFlags.UseInstantiation
-        )) as NPauseMenuButton;
+        var saveAndQuitButton = Traverse.Create(__instance)
+            .Field<NPauseMenuButton>("_saveAndQuitButton")
+            .Value;
+        if (saveAndQuitButton == null) return;
 
-        if (restartButton == null)
-        {
-            Log.Warn("[QUICKRELOAD]: Quick Restart: failed to duplicate template button.");
-            return;
-        }
+        var restartButton = saveAndQuitButton.Duplicate(
+            (int)(Node.DuplicateFlags.Groups | Node.DuplicateFlags.Scripts)
+        ) as NPauseMenuButton;
+
+        if (restartButton == null) return;
 
         restartButton.Name = QuickReloadNodeName;
-        restartButton.GetNode<MegaLabel>("Label").SetTextAutoSize(RestartLoc.GetFormattedText());
+        restartButton.GetNode<MegaLabel>("Label").SetTextAutoSize("ReLoad");
         MakeVisualsUnique(restartButton);
 
-        var pauseMenu = saveAndQuitButton.GetParent();
-        pauseMenu.AddChild(restartButton);
-        pauseMenu.MoveChild(restartButton, saveAndQuitButton.GetIndex());
+        buttonContainer.AddChild(restartButton);
+        buttonContainer.MoveChild(restartButton, saveAndQuitButton.GetIndex());
 
         ConnectFocusNeighbors(buttonContainer, restartButton);
 
@@ -66,26 +54,21 @@ static class QuickReloadPauseMenuPatch
             Callable.From<NButton>(_ => OnQuickReloadPressed(__instance))
         );
 
-        Log.Info("[QUICKRELOAD]: Quick Restart button added.");
+        Log.Info("[QUICKRELOAD]: Quick Reload button added.");
     }
 
-    private static void ConnectFocusNeighbors(VBoxContainer buttonContainer, NPauseMenuButton restartButton)
+    private static void ConnectFocusNeighbors(Control buttonContainer, NPauseMenuButton restartButton)
     {
         var buttons = new List<NPauseMenuButton>();
         foreach (var button in buttonContainer.GetChildren())
         {
             if (button is NPauseMenuButton { Visible: true } pauseMenuButton)
-            {
                 buttons.Add(pauseMenuButton);
-            }
         }
 
         var index = buttons.IndexOf(restartButton);
         if (index <= 0 || index >= buttons.Count - 1)
-        {
-            Log.Warn("[QUICKRELOAD]: Quick Restart: unexpected button ordering, skipping focus neighbor update.");
             return;
-        }
 
         var previousButton = buttons[index - 1];
         var nextButton = buttons[index + 1];
@@ -100,20 +83,16 @@ static class QuickReloadPauseMenuPatch
     {
         var image = button.GetNodeOrNull<TextureRect>("ButtonImage");
         if (image?.Material != null)
-        {
             image.Material = image.Material.Duplicate() as Material;
-        }
 
         var label = button.GetNodeOrNull<CanvasItem>("Label");
         if (label?.Material != null)
-        {
             label.Material = label.Material.Duplicate() as Material;
-        }
     }
 
     private static void OnQuickReloadPressed(NPauseMenu pauseMenu)
     {
-        Log.Info("[QUICKRELOAD]: Quick Restart pressed.");
+        Log.Info("[QUICKRELOAD]: Quick Reload pressed.");
         TaskHelper.RunSafely(QuickReloadRunner.RestartAsync(pauseMenu));
     }
 }
